@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ben Pool — Motion Designer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0b0e13;
+    --bg-raise: #10141b;
+    --surface: #141922;
+    --line: #232a35;
+    --text: #e7e9ec;
+    --text-dim: #7d8794;
+    --amber: #ffb454;
+    --cyan: #6be3d6;
+    --pink: #ff7aa8;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Inter', sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  ::selection{background:var(--amber); color:#1a1305;}
+
+  /* background grid */
+  .grid-bg{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, black 40%, transparent 100%);
+  }
+
+  /* scroll progress bar - render/export bar motif */
+  .progress{
+    position:fixed; top:0; left:0; height:2px; width:0%;
+    background: linear-gradient(90deg, var(--cyan), var(--amber));
+    z-index:1000; transition: width 0.1s linear;
+  }
+
+  a{color:inherit; text-decoration:none;}
+
+  /* ---------- nav ---------- */
+  nav{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 18px 40px;
+    background: rgba(11,14,19,0.75);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+  .nav-logo{color:var(--text); font-weight:600; letter-spacing:0.5px;}
+  .nav-logo span{color:var(--amber);}
+  .nav-links{display:flex; gap:28px;}
+  .nav-links a{color:var(--text-dim); transition: color 0.2s;}
+  .nav-links a:hover{color:var(--cyan);}
+  .nav-links a::after{content:"()";  color:var(--text-dim);}
+
+  section{position:relative; z-index:1;}
+
+  /* ---------- hero ---------- */
+  .hero{
+    min-height:100vh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding: 140px 24px 80px;
+  }
+  .terminal{
+    width:100%; max-width:720px;
+    background: var(--surface);
+    border:1px solid var(--line);
+    border-radius:10px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.45);
+    overflow:hidden;
+  }
+  .term-bar{
+    display:flex; align-items:center; gap:8px;
+    padding:12px 16px;
+    background: var(--bg-raise);
+    border-bottom:1px solid var(--line);
+  }
+  .dot{width:11px; height:11px; border-radius:50%;}
+  .dot.r{background:#ff5f57;} .dot.y{background:#febc2e;} .dot.g{background:#28c840;}
+  .term-title{
+    margin:0 auto; font-family:var(--mono); font-size:12px; color:var(--text-dim);
+    transform:translateX(-18px);
+  }
+  .term-body{
+    padding:28px 30px 34px;
+    font-family:var(--mono);
+    font-size:15px; line-height:1.9;
+    min-height:230px;
+  }
+  .term-body .muted{color:var(--text-dim);}
+  .term-body .key{color:var(--cyan);}
+  .term-body .str{color:var(--amber);}
+  .term-body .punc{color:var(--text-dim);}
+  .cursor{
+    display:inline-block; width:8px; height:16px; background:var(--amber);
+    margin-left:2px; vertical-align:-2px;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink{50%{opacity:0;}}
+
+  .hero-sub{
+    margin-top:26px; text-align:center; font-family:var(--mono);
+    font-size:12px; color:var(--text-dim); letter-spacing:2px; text-transform:uppercase;
+  }
+  .hero-sub .chevron{animation: bob 1.6s ease-in-out infinite; display:inline-block; margin-top:6px;}
+  @keyframes bob{0%,100%{transform:translateY(0);} 50%{transform:translateY(6px);}}
+
+  /* ---------- section headers ---------- */
+  .section-inner{max-width:1000px; margin:0 auto; padding: 110px 24px;}
+  .comment{
+    font-family:var(--mono); color: #5f6b7a; font-size:13.5px; margin-bottom:14px;
+  }
+  .comment span{color:#4a5568;}
+  .sec-title{
+    font-family:var(--mono); font-size: clamp(26px,4vw,38px); font-weight:600;
+    margin:0 0 10px; letter-spacing:-0.5px;
+  }
+  .sec-title .tag{color:var(--amber);}
+  .sec-desc{color:var(--text-dim); max-width:560px; line-height:1.7; font-size:15px; margin-bottom:50px;}
+
+  .reveal{opacity:0; transform:translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease;}
+  .reveal.in{opacity:1; transform:translateY(0);}
+
+  /* ---------- projects ---------- */
+  .project{
+    border:1px solid var(--line); border-radius:12px; overflow:hidden;
+    background:var(--surface); margin-bottom:56px;
+  }
+  .project-bar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 20px; background:var(--bg-raise); border-bottom:1px solid var(--line);
+    font-family:var(--mono); font-size:13px; color:var(--text-dim);
+  }
+  .project-bar .fname{color:var(--text);}
+  .project-bar .fname::before{content:"◆ "; color:var(--amber);}
+  .tags{display:flex; gap:8px; flex-wrap:wrap;}
+  .tag-pill{
+    font-family:var(--mono); font-size:11.5px; padding:3px 9px; border-radius:5px;
+    background: rgba(107,227,214,0.08); color:var(--cyan); border:1px solid rgba(107,227,214,0.2);
+  }
+  .project-media{
+    aspect-ratio:16/9; width:100%;
+    background:
+      repeating-linear-gradient(45deg, #10141b, #10141b 10px, #12161e 10px, #12161e 20px);
+    background-size: cover;
+    background-position: center;
+    display:flex; align-items:center; justify-content:center; flex-direction:column; gap:10px;
+    border-bottom:1px solid var(--line);
+    position:relative;
+  }
+  .project-media iframe{position:absolute; inset:0; width:100%; height:100%; border:0;}
+  .project-media.has-thumb::after{
+    content:""; position:absolute; inset:0;
+    background: linear-gradient(180deg, rgba(11,14,19,0.15), rgba(11,14,19,0.55));
+    pointer-events:none;
+  }
+  .project-media.has-thumb .play-btn,
+  .project-media.has-thumb .media-label{ position:relative; z-index:1; }
+  .project-media.has-thumb .media-label{ color:#d7dce2; }
+  .play-btn{
+    width:56px; height:56px; border-radius:50%;
+    border:1.5px solid var(--text-dim); display:flex; align-items:center; justify-content:center;
+    transition: all 0.25s;
+    cursor:pointer;
+  }
+  .project:hover .play-btn{border-color:var(--amber); box-shadow:0 0 0 8px rgba(255,180,84,0.06);}
+  .play-btn svg{fill:var(--text-dim); transition: fill 0.25s;}
+  .project:hover .play-btn svg{fill:var(--amber);}
+  .media-label{font-family:var(--mono); font-size:12px; color:var(--text-dim); letter-spacing:1px;}
+
+  .project-body{padding:28px 30px 8px;}
+  .project-title{
+    font-family:var(--mono); font-size:22px; font-weight:600; margin:0 0 4px;
+    display:flex; align-items:baseline; gap:10px;
+  }
+  .project-title .idx{color:var(--amber); font-size:14px;}
+  .project-role{color:var(--text-dim); font-size:13px; font-family:var(--mono); margin-bottom:16px;}
+  .project-desc{color:#b8bfc9; font-size:14.5px; line-height:1.75; max-width:640px; margin-bottom:26px;}
+
+  .subhead{
+    font-family:var(--mono); font-size:11.5px; color:var(--text-dim); text-transform:lowercase;
+    letter-spacing:0.5px; margin: 0 0 12px; padding: 0 30px;
+  }
+  .subhead::before{content:"$ ls ";}
+
+  .strip{
+    display:flex; gap:10px; overflow-x:auto; padding: 0 30px 28px;
+    scrollbar-width:thin;
+  }
+  .strip::-webkit-scrollbar{height:6px;}
+  .strip::-webkit-scrollbar-thumb{background:var(--line); border-radius:3px;}
+  .thumb{
+    min-width:150px; height:100px; border-radius:6px; flex-shrink:0;
+    background: linear-gradient(135deg, #171d27, #10141b);
+    background-size: cover;
+    background-position: center;
+    border:1px solid var(--line);
+    display:flex; align-items:flex-end; padding:8px;
+    font-family:var(--mono); font-size:10.5px; color:var(--text-dim);
+    cursor:pointer;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .thumb:hover{border-color:var(--amber); transform:translateY(-2px);}
+  .thumb.has-img{color:#f2f4f6; text-shadow: 0 1px 4px rgba(0,0,0,0.8);}
+  .thumb.has-img::before{
+    content:""; position:relative;
+  }
+
+  /* ---- layout variant: split (project 02) ---- */
+  .project.split .project-main{
+    display:grid; grid-template-columns: 1.3fr 1fr;
+  }
+  .project.split .project-media{border-bottom:none; border-right:1px solid var(--line); aspect-ratio:auto; height:100%; min-height:280px;}
+  .project.split .project-side{
+    padding:26px 26px 22px; border-left:3px solid var(--cyan);
+    display:flex; flex-direction:column;
+  }
+  .project.split .project-desc{margin-bottom:20px;}
+  .project.split .tags{margin-bottom:0;}
+  @media (max-width:760px){
+    .project.split .project-main{grid-template-columns:1fr;}
+    .project.split .project-media{border-right:none; border-bottom:1px solid var(--line); aspect-ratio:16/9; min-height:0;}
+    .project.split .project-side{border-left:none; border-top:3px solid var(--cyan);}
+  }
+
+  /* ---- layout variant: mosaic (project 03) ---- */
+  .project.mosaic .project-media{aspect-ratio:21/9;}
+  .project.mosaic .project-body{
+    display:grid; grid-template-columns:1fr 200px; gap:30px; align-items:start;
+  }
+  .meta-table{font-family:var(--mono); font-size:12.5px; border-top:1px solid var(--line);}
+  .meta-table div{
+    display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--line); gap:10px;
+  }
+  .meta-table div span:first-child{color:var(--text-dim);}
+  .meta-table div span:last-child{color:var(--text); text-align:right;}
+  .mosaic-grid{
+    display:grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows:90px; gap:10px; padding:0 30px 28px;
+  }
+  .mosaic-grid .thumb{min-width:0; width:100%; height:100%;}
+  .mosaic-grid .thumb.big{grid-column:span 2; grid-row:span 2; height:100%;}
+  @media (max-width:760px){
+    .project.mosaic .project-body{grid-template-columns:1fr;}
+    .mosaic-grid{grid-template-columns:repeat(2,1fr);}
+  }
+
+  /* ---- layout variant: log (project 04) ---- */
+  .project.log .project-body{padding:0;}
+  .log-wrap{display:flex; font-family:var(--mono); font-size:13.5px; line-height:1.9; padding:26px 0;}
+  .log-gutter{
+    padding:0 18px; color:#3d4552; text-align:right; user-select:none; border-right:1px solid var(--line);
+    min-width:34px;
+  }
+  .log-lines{padding:0 30px; color:#8b96a5;}
+  .log-lines .c{color:#4d8f7a;}
+  .log-lines .k{color:var(--amber);}
+  .project-title.log-title{padding:22px 30px 0;}
+  .file-table{width:100%; border-collapse:collapse; font-family:var(--mono); font-size:12.5px; margin:0 30px 28px; width:calc(100% - 60px);}
+  .file-table th{text-align:left; color:var(--text-dim); font-weight:500; padding:8px 10px; border-bottom:1px solid var(--line); font-size:11px; text-transform:lowercase;}
+  .file-table td{padding:9px 10px; border-bottom:1px solid var(--line); color:var(--text);}
+  .file-table td.dim{color:var(--text-dim);}
+  .file-table tr:last-child td{border-bottom:none;}
+  .file-table td.fn::before{content:"▸ "; color:var(--cyan);}
+  .file-table tr.clickable{cursor:pointer;}
+  .file-table tr.clickable:hover td{color:var(--amber);}
+  .file-table tr.clickable:hover td.dim{color:var(--text-dim);}
+
+  /* ---------- lightbox ---------- */
+  .lightbox{
+    position:fixed; inset:0; z-index:2000;
+    background: rgba(8,10,14,0.9);
+    display:none; align-items:center; justify-content:center;
+    padding: 60px 24px;
+    backdrop-filter: blur(4px);
+  }
+  .lightbox.open{display:flex;}
+  .lightbox-inner{
+    position:relative; max-width:min(1100px, 92vw); max-height:88vh;
+    display:flex; flex-direction:column;
+  }
+  .lightbox-frame{
+    border:1px solid var(--line); border-radius:10px; overflow:hidden;
+    background: var(--surface);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+  }
+  .lightbox img{
+    display:block; width:100%; height:auto; max-height:78vh; object-fit:contain;
+    background: var(--bg-raise);
+  }
+  .lightbox-caption{
+    font-family:var(--mono); font-size:12px; color:var(--text-dim);
+    padding:12px 4px 0; letter-spacing:0.5px;
+  }
+  .lightbox-caption::before{content:"▸ "; color:var(--cyan);}
+  .lightbox-close{
+    position:absolute; top:-44px; right:0;
+    width:34px; height:34px; border-radius:50%;
+    border:1.5px solid var(--text-dim); color:var(--text-dim);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--mono); font-size:18px; line-height:1; cursor:pointer;
+    transition: all 0.2s; background:transparent;
+  }
+  .lightbox-close:hover{border-color:var(--amber); color:var(--amber);}
+
+  /* ---------- footer ---------- */
+  footer{
+    border-top:1px solid var(--line); padding: 70px 24px 40px;
+    font-family:var(--mono);
+  }
+  .foot-inner{max-width:1000px; margin:0 auto;}
+  .foot-prompt{font-size:16px; margin-bottom:22px;}
+  .foot-prompt .u{color:var(--cyan);} .foot-prompt .p{color:var(--text-dim);}
+  .foot-links{display:flex; gap:26px; flex-wrap:wrap; margin-bottom:40px;}
+  .foot-links a{font-size:14px; color:var(--text); border-bottom:1px solid transparent; padding-bottom:2px; transition:border-color 0.2s, color 0.2s;}
+  .foot-links a:hover{border-color:var(--amber); color:var(--amber);}
+  .foot-bottom{color:var(--text-dim); font-size:12px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;}
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+<div class="progress" id="progress"></div>
+
+<nav>
+  <div class="nav-logo">ben<span>_</span>pool</div>
+  <div class="nav-links">
+    <a href="#work">work</a>
+    <a href="#contact">contact</a>
+  </div>
+</nav>
+
+<!-- ===================== HERO ===================== -->
+<section class="hero" id="top">
+  <div class="terminal">
+    <div class="term-bar">
+      <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+      <p class="term-title">benpool.txt</p>
+    </div>
+    <div class="term-body" id="typedBody"></div>
+  </div>
+  <div class="hero-sub">scroll<div class="chevron">▾</div></div>
+</section>
+
+<!-- ===================== PROJECTS ===================== -->
+<section id="work">
+  <div class="section-inner">
+    <p class="comment reveal">// a handful of jobs, from brief to final grade</p>
+    <h2 class="sec-title reveal">selected<span class="tag">.work</span></h2>
+    <p class="sec-desc reveal">Four projects, each with the final edit, a look at the process, and the mess of stills that got it there. Swap in real footage and photos as you go.</p>
+
+    <!-- PROJECT 01 -->
+    <div class="project reveal">
+      <div class="project-bar">
+        <span class="fname">project_01_brand-film.mp4</span>
+        <div class="tags"><span class="tag-pill">"After Effects"</span><span class="tag-pill">"Cinema 4D"</span></div>
+      </div>
+      <div class="project-media" data-vimeo-id="1214386590" data-thumbnail="images/mess30.png">
+        <div class="play-btn" onclick="loadVimeoVideo(this.parentElement)"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+        <div class="media-label">VIDEO_PREVIEW — drop final edit here</div>
+      </div>
+      <div class="project-body">
+        <h3 class="project-title"><span class="idx">01</span>Project title</h3>
+        <p class="project-role">role — lead motion designer · type — 30s brand film</p>
+        <p class="project-desc">Add a short description here: the brief, what the film needed to do, and the part you owned — from storyboard through final grade.</p>
+      </div>
+      <p class="subhead">process/</p>
+      <div class="strip">
+        <div class="thumb" data-img="images/Comp1_10.png" onclick="openLightbox(this, 'Comp1_10.png')">process_01.jpg</div>
+        <div class="thumb" data-img="" onclick="openLightbox(this, 'process_02.jpg')">process_02.jpg</div>
+        <div class="thumb" data-img="" onclick="openLightbox(this, 'process_03.jpg')">process_03.jpg</div>
+        <div class="thumb" data-img="" onclick="openLightbox(this, 'process_04.jpg')">process_04.jpg</div>
+        <div class="thumb" data-img="" onclick="openLightbox(this, 'reel_wip.mov')">reel_wip.mov</div>
+      </div>
+      <p class="subhead">assets/</p>
+      <div class="strip">
+        <div class="thumb" data-img="" onclick="openLightbox(this, 'still_01.jpg')">still_01.jpg</div>
+        <div class="thumb" data-img="" onclick="openLightbox(this, 'still_02.jpg')">still_02.jpg</div>
+        <div class="thumb" data-img="" onclick="openLightbox(this, 'bts_01.jpg')">bts_01.jpg</div>
+        <div class="thumb" data-img="" onclick="openLightbox(this, 'bts_02.jpg')">bts_02.jpg</div>
+      </div>
+    </div>
+
+    <!-- PROJECT 02 — split layout -->
+    <div class="project split reveal">
+      <div class="project-bar">
+        <span class="fname">project_02_title-sequence.mp4</span>
+        <div class="tags"><span class="tag-pill">"Premiere Pro"</span><span class="tag-pill">"Illustrator"</span></div>
+      </div>
+      <div class="project-main">
+        <div class="project-media" data-vimeo-id="76979871" data-thumbnail="">
+          <div class="play-btn" onclick="loadVimeoVideo(this.parentElement)"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          <div class="media-label">VIDEO_PREVIEW — drop final edit here</div>
+        </div>
+        <div class="project-side">
+          <h3 class="project-title"><span class="idx">02</span>Project title</h3>
+          <p class="project-role">role — motion designer · type — title sequence</p>
+          <p class="project-desc">Add a short description here: the brief, what the film needed to do, and the part you owned — from storyboard through final grade.</p>
+          <div class="tags">
+            <span class="tag-pill">"Premiere Pro"</span>
+            <span class="tag-pill">"Illustrator"</span>
+            <span class="tag-pill">"After Effects"</span>
+          </div>
+        </div>
+      </div>
+      <p class="subhead">process/</p>
+      <div class="strip">
+        <div class="thumb" data-img="" onclick="openLightbox(this, 'process_01.jpg')">process_01.jpg</div>
+        <div class="thumb" data-img="" onclick="openLightbox(this, 'process_02.jpg')">process_02.jpg</div>
+        <div class="thumb" data-img="" onclick="openLightbox(this, 'process_03.jpg')">process_03.jpg</div>
+        <div class="thumb" data-img="" onclick="openLightbox(this, 'reel_wip.mov')">reel_wip.mov</div>
+        <div class="thumb" data-img="" onclick="openLightbox(this, 'still_01.jpg')">still_01.jpg</div>
+        <div class="thumb" data-img="" onclick="openLightbox(this, 'bts_01.jpg')">bts_01.jpg</div>
+      </div>
+    </div>
+
+    <!-- PROJECT 03 — mosaic layout -->
+    <div class="project mosaic reveal">
+      <div class="project-bar">
+        <span class="fname">project_03_social-campaign.mp4</span>
+        <div class="tags"><span class="tag-pill">"After Effects"</span><span class="tag-pill">"Blender"</span></div>
+      </div>
+      <div class="project-media" data-vimeo-id="76979871" data-thumbnail="">
+        <div class="play-btn" onclick="loadVimeoVideo(this.parentElement)"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+        <div class="media-label">VIDEO_PREVIEW — drop final edit here</div>
+      </div>
+      <div class="project-body">
+        <div>
+          <h3 class="project-title"><span class="idx">03</span>Project title</h3>
+          <p class="project-role">role — motion designer · type — social campaign</p>
+          <p class="project-desc">Add a short description here: the brief, what the film needed to do, and the part you owned — from storyboard through final grade.</p>
+        </div>
+        <div class="meta-table">
+          <div><span>type</span><span>social</span></div>
+          <div><span>length</span><span>0:15</span></div>
+          <div><span>delivery</span><span>9:16</span></div>
+          <div><span>year</span><span>2026</span></div>
+        </div>
+      </div>
+      <p class="subhead">assets/</p>
+      <div class="mosaic-grid">
+        <div class="thumb big" data-img="" onclick="openLightbox(this, 'still_01.jpg')">still_01.jpg</div>
+        <div class="thumb" data-img="" onclick="openLightbox(this, 'still_02.jpg')">still_02.jpg</div>
+        <div class="thumb" data-img="" onclick="openLightbox(this, 'bts_01.jpg')">bts_01.jpg</div>
+        <div class="thumb" data-img="" onclick="openLightbox(this, 'process_01.jpg')">process_01.jpg</div>
+        <div class="thumb" data-img="" onclick="openLightbox(this, 'process_02.jpg')">process_02.jpg</div>
+        <div class="thumb" data-img="" onclick="openLightbox(this, 'bts_02.jpg')">bts_02.jpg</div>
+      </div>
+    </div>
+
+    <!-- PROJECT 04 — log / directory listing layout -->
+    <div class="project log reveal">
+      <div class="project-bar">
+        <span class="fname">project_04_music-video.mp4</span>
+        <div class="tags"><span class="tag-pill">"Cinema 4D"</span><span class="tag-pill">"Nuke"</span></div>
+      </div>
+      <div class="project-media" data-vimeo-id="76979871" data-thumbnail="">
+        <div class="play-btn" onclick="loadVimeoVideo(this.parentElement)"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+        <div class="media-label">VIDEO_PREVIEW — drop final edit here</div>
+      </div>
+      <h3 class="project-title log-title"><span class="idx">04</span>Project title</h3>
+      <p class="project-role" style="padding:6px 30px 0;">role — 3D + compositing · type — music video</p>
+      <div class="project-body">
+        <div class="log-wrap">
+          <div class="log-gutter">01<br>02<br>03</div>
+          <div class="log-lines">
+            <span class="c">// brief</span><br>
+            <span class="k">const</span> notes = "Add a short description here: the brief, what the film needed to do, and the part you owned — from storyboard through final grade."<br>
+            <span class="c">// end</span>
+          </div>
+        </div>
+      </div>
+      <table class="file-table">
+        <tr><th>name</th><th>type</th><th>size</th></tr>
+        <tr class="clickable" data-img="" onclick="openLightbox(this, 'process_01.jpg')"><td class="fn">process_01.jpg</td><td class="dim">still</td><td class="dim">4.2 mb</td></tr>
+        <tr class="clickable" data-img="" onclick="openLightbox(this, 'process_02.jpg')"><td class="fn">process_02.jpg</td><td class="dim">still</td><td class="dim">3.8 mb</td></tr>
+        <tr><td class="fn">reel_wip.mov</td><td class="dim">clip</td><td class="dim">61 mb</td></tr>
+        <tr class="clickable" data-img="" onclick="openLightbox(this, 'bts_01.jpg')"><td class="fn">bts_01.jpg</td><td class="dim">still</td><td class="dim">2.9 mb</td></tr>
+      </table>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== LIGHTBOX ===================== -->
+<div class="lightbox" id="lightbox" onclick="if(event.target === this) closeLightbox();">
+  <div class="lightbox-inner">
+    <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close">&times;</button>
+    <div class="lightbox-frame">
+      <img id="lightboxImg" src="" alt="">
+    </div>
+    <p class="lightbox-caption" id="lightboxCaption"></p>
+  </div>
+</div>
+
+<!-- ===================== FOOTER / CONTACT ===================== -->
+<footer id="contact">
+  <div class="foot-inner">
+    <p class="foot-prompt"><span class="u">ben@pool</span><span class="p">:~$</span> contact --open</p>
+    <div class="foot-links">
+      <a href="mailto:hello@benpool.com">email</a>
+      <a href="#">instagram</a>
+      <a href="#">vimeo</a>
+      <a href="#">linkedin</a>
+    </div>
+    <div class="foot-bottom">
+      <span>Ben Pool — Motion Designer, London</span>
+      <span id="footClock">--:--:--</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ---- typing effect for hero terminal ----
+  const typedEl = document.getElementById('typedBody');
+  const lines = [
+    '<span class="muted">const</span> <span class="key">designer</span> <span class="punc">=</span> <span class="punc">{</span>',
+    '&nbsp;&nbsp;name<span class="punc">:</span> <span class="str">"ben pool"</span><span class="punc">,</span>',
+    '&nbsp;&nbsp;role<span class="punc">:</span> <span class="str">"motion designer"</span><span class="punc">,</span>',
+    '&nbsp;&nbsp;based<span class="punc">:</span> <span class="str">"london, uk"</span><span class="punc">,</span>',
+    '&nbsp;&nbsp;localTime<span class="punc">:</span> <span class="str" id="heroClock">--:--:--</span>',
+    '<span class="punc">}</span>'
+  ];
+
+  function typeLines(el, lines, cb){
+    let i = 0;
+    function next(){
+      if(i >= lines.length){ if(cb) cb(); return; }
+      const div = document.createElement('div');
+      div.innerHTML = lines[i];
+      el.appendChild(div);
+      i++;
+      setTimeout(next, 220);
+    }
+    next();
+  }
+
+  typeLines(typedEl, lines, () => {
+    const cur = document.createElement('span');
+    cur.className = 'cursor';
+    typedEl.lastElementChild.appendChild(cur);
+  });
+
+  // ---- live clocks ----
+  function pad(n){ return n.toString().padStart(2,'0'); }
+
+  function getTimeParts(tz){
+    const now = new Date();
+    const fmt = new Intl.DateTimeFormat('en-GB', {
+      timeZone: tz, hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false
+    });
+    const parts = fmt.formatToParts(now).reduce((a,p)=>{a[p.type]=p.value; return a;},{});
+    return parts;
+  }
+
+  function getOffsetLabel(tz){
+    const now = new Date();
+    const fmt = new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName:'shortOffset' });
+    const parts = fmt.formatToParts(now);
+    const off = parts.find(p => p.type === 'timeZoneName');
+    return off ? off.value.replace('GMT','UTC') : '';
+  }
+
+  function tick(){
+    document.querySelectorAll('[data-tz]').forEach(row => {
+      const tz = row.getAttribute('data-tz');
+      const p = getTimeParts(tz);
+      const clockEl = row.querySelector('[data-clock]');
+      const offsetEl = row.querySelector('[data-offset]');
+      clockEl.innerHTML = `${p.hour}<span class="sec">:${p.minute}:${p.second}</span>`;
+      offsetEl.textContent = getOffsetLabel(tz);
+    });
+
+    const lp = getTimeParts('Europe/London');
+    const heroClock = document.getElementById('heroClock');
+    if(heroClock){ heroClock.textContent = `${lp.hour}:${lp.minute}:${lp.second}`; }
+    const footClock = document.getElementById('footClock');
+    if(footClock){ footClock.textContent = `${lp.hour}:${lp.minute}:${lp.second} London`; }
+  }
+  tick();
+  setInterval(tick, 1000);
+
+  // ---- scroll progress bar ----
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement;
+    const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+    document.getElementById('progress').style.width = scrolled + '%';
+  });
+
+  // ---- scroll reveal ----
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // ---- reduced motion ----
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+    document.documentElement.style.scrollBehavior = 'auto';
+  }
+
+  // ---- thumbnail images on project videos ----
+  // Set data-thumbnail="path/or/url.jpg" on any .project-media element and
+  // it'll be shown as the poster behind the play button instead of the
+  // diagonal-stripe placeholder.
+  document.querySelectorAll('.project-media').forEach(el => {
+    const thumb = el.getAttribute('data-thumbnail');
+    if(thumb){
+      el.style.backgroundImage = `url("${thumb}")`;
+      el.classList.add('has-thumb');
+    }
+  });
+
+  // ---- click-to-load Vimeo embeds ----
+  // Swaps the styled placeholder for a real Vimeo player on click, so the
+  // heavy iframe only loads when someone actually wants to watch.
+  function loadVimeoVideo(container){
+    const id = container.getAttribute('data-vimeo-id');
+    if(!id) return;
+    // color param recolors Vimeo's own controls to match the site accent;
+    // title/byline/portrait=0 hides Vimeo's built-in branding overlay.
+    container.innerHTML = `<iframe
+        src="https://player.vimeo.com/video/${id}?title=0&byline=0&portrait=0&color=ffb454&autoplay=1"
+        frameborder="0"
+        allow="autoplay; fullscreen; picture-in-picture"
+        allowfullscreen
+      ></iframe>`;
+  }
+
+  // ---- thumbnail images on strip/mosaic/table items ----
+  // Set data-img="path/or/url.jpg" on any .thumb or table row and it'll be
+  // shown as the tile background instead of the plain gradient swatch.
+  document.querySelectorAll('[data-img]').forEach(el => {
+    const img = el.getAttribute('data-img');
+    if(img && el.classList.contains('thumb')){
+      el.style.backgroundImage = `url("${img}")`;
+      el.classList.add('has-img');
+    }
+  });
+
+  // ---- lightbox popup for stills ----
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+  const lightboxCaption = document.getElementById('lightboxCaption');
+
+  function openLightbox(el, label){
+    // Prefer a real image set via data-img; otherwise fall back to the
+    // filename label so the popup still works before assets are wired up.
+    const src = el.getAttribute('data-img') || '';
+    lightboxImg.src = src;
+    lightboxImg.alt = label || '';
+    lightboxCaption.textContent = label || '';
+    lightbox.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox(){
+    lightbox.classList.remove('open');
+    document.body.style.overflow = '';
+    lightboxImg.src = '';
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape' && lightbox.classList.contains('open')) closeLightbox();
+  });
+</script>
+
+</body>
+</html>
