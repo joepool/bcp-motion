@@ -1,0 +1,7 @@
+# One filename per line, in the order you want them to appear.
+# To add a project: drop a new .txt file in this folder and add its name here.
+# To reorder projects: just reorder these lines.
+# To remove a project: delete or comment out (#) its line.
+
+project-01.txt
+project-02.txt

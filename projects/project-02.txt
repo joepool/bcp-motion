@@ -1,0 +1,15 @@
+filename: title-sequence.mp4
+title: Project title
+vimeo: 76979871
+thumbnail:
+role: motion designer
+type: title sequence
+tags: Premiere Pro, Illustrator, After Effects
+description: Add a short description here: the brief, what the film needed to do, and the part you owned — from storyboard through final grade.
+
+process: process_01.jpg
+process: process_02.jpg
+process: process_03.jpg
+process: reel_wip.mov
+process: still_01.jpg
+process: bts_01.jpg

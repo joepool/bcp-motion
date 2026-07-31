@@ -1,0 +1,23 @@
+# Lines starting with # are ignored. Order of fields doesn't matter.
+# "tags", "process" and "assets" accept comma-separated lists,
+# or you can repeat the "process:" / "asset:" line once per image — both work.
+
+filename: brand-film.mp4
+title: Project title
+vimeo: 1214386590
+thumbnail: images/mess30.png
+role: lead motion designer
+type: 30s brand film
+tags: After Effects, Cinema 4D
+description: Add a short description here: the brief, what the film needed to do, and the part you owned — from storyboard through final grade.
+
+process: images/Comp1_10.png
+process: process_02.jpg
+process: process_03.jpg
+process: process_04.jpg
+process: reel_wip.mov
+
+asset: still_01.jpg
+asset: still_02.jpg
+asset: bts_01.jpg
+asset: bts_02.jpg
