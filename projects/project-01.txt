@@ -6,12 +6,11 @@ filename: brand-film.mp4
 title: Project title
 vimeo: 1214386590
 thumbnail: images/mess30.png
-role: lead motion designer
-type: 30s brand film
+subheading: lead motion designer | 30s brand film
 tags: After Effects, Cinema 4D
 description: Add a short description here: the brief, what the film needed to do, and the part you owned — from storyboard through final grade.
 
-process: images/Comp1_10.png
+process: images/Comp1_20.png
 process: process_02.jpg
 process: process_03.jpg
 process: process_04.jpg

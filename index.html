@@ -162,13 +162,16 @@
     position:relative;
   }
   .project-media iframe{position:absolute; inset:0; width:100%; height:100%; border:0;}
+  .project-media .poster-img{
+    position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0;
+  }
   .project-media.has-thumb::after{
-    content:""; position:absolute; inset:0;
+    content:""; position:absolute; inset:0; z-index:1;
     background: linear-gradient(180deg, rgba(11,14,19,0.15), rgba(11,14,19,0.55));
     pointer-events:none;
   }
   .project-media.has-thumb .play-btn,
-  .project-media.has-thumb .media-label{ position:relative; z-index:1; }
+  .project-media.has-thumb .media-label{ position:relative; z-index:2; }
   .project-media.has-thumb .media-label{ color:#d7dce2; }
   .play-btn{
     width:56px; height:56px; border-radius:50%;
@@ -203,10 +206,9 @@
   .strip::-webkit-scrollbar{height:6px;}
   .strip::-webkit-scrollbar-thumb{background:var(--line); border-radius:3px;}
   .thumb{
+    position:relative; overflow:hidden;
     min-width:150px; height:100px; border-radius:6px; flex-shrink:0;
     background: linear-gradient(135deg, #171d27, #10141b);
-    background-size: cover;
-    background-position: center;
     border:1px solid var(--line);
     display:flex; align-items:flex-end; padding:8px;
     font-family:var(--mono); font-size:10.5px; color:var(--text-dim);
@@ -214,7 +216,20 @@
     transition: border-color 0.2s, transform 0.2s;
   }
   .thumb:hover{border-color:var(--amber); transform:translateY(-2px);}
-  .thumb.has-img{color:#f2f4f6; text-shadow: 0 1px 4px rgba(0,0,0,0.8);}
+  .thumb img{
+    position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0;
+  }
+  .thumb .thumb-label{ position:relative; z-index:1; }
+  .thumb.has-img .thumb-label{
+    color:#f2f4f6; text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+  }
+  .thumb.has-img::after{
+    content:""; position:absolute; inset:0; z-index:0;
+    background: linear-gradient(180deg, rgba(11,14,19,0), rgba(11,14,19,0.55));
+  }
+  .thumb.img-missing .thumb-label::before{
+    content:"⚠ missing — "; color:var(--pink);
+  }
 
   .empty-note{
     font-family:var(--mono); font-size:13px; color:var(--text-dim); padding: 0 30px 28px;
@@ -392,18 +407,44 @@
     ));
   }
 
-  function thumbHtml(imgName){
-    const label = escapeHtml(imgName);
-    const dataImg = imgName.match(/^https?:\/\//) || imgName.includes('/')
+  // Resolves whatever the person typed in the text file into an actual
+  // src path: leave full URLs and anything with a "/" in it alone,
+  // otherwise assume it lives in the images/ folder next to index.html.
+  function resolveImgPath(imgName){
+    return imgName.match(/^https?:\/\//) || imgName.startsWith('/') || imgName.includes('/')
       ? imgName
       : `images/${imgName}`;
-    return `<div class="thumb" data-img="${escapeHtml(dataImg)}" onclick="openLightbox(this, '${label.replace(/'/g,"\\'")}')">${label}</div>`;
+  }
+
+  function thumbHtml(imgName){
+    const label = escapeHtml(imgName);
+    const src = escapeHtml(resolveImgPath(imgName));
+    return `<div class="thumb" data-img="${src}" onclick="openLightbox(this, '${label.replace(/'/g,"\\'")}')">
+      <img src="${src}" alt="${label}" loading="lazy"
+           onload="this.closest('.thumb').classList.add('has-img')"
+           onerror="this.closest('.thumb').classList.add('img-missing'); console.warn('Image not found:', this.src); this.remove();">
+      <span class="thumb-label">${label}</span>
+    </div>`;
   }
 
   function buildProjectHtml(data, index){
     const idx = String(index + 1).padStart(2, '0');
     const filename = data.filename || `${slugify(data.title)}.mp4`;
-    const thumbAttr = data.thumbnail ? ` data-thumbnail="${escapeHtml(data.thumbnail)}"` : ' data-thumbnail=""';
+    const posterSrc = data.thumbnail ? resolveImgPath(data.thumbnail) : '';
+    const posterImg = posterSrc
+      ? `<img class="poster-img" src="${escapeHtml(posterSrc)}" alt=""
+             onload="this.closest('.project-media').classList.add('has-thumb')"
+             onerror="console.warn('Thumbnail not found:', this.src); this.remove();">`
+      : '';
+
+    // Accepts either a single combined "subheading: role | type" field,
+    // or the older separate role: / type: fields, for compatibility.
+    let roleText = data.role || '', typeText = data.type || '';
+    if(data.subheading){
+      const parts = data.subheading.split('|').map(s => s.trim());
+      roleText = parts[0] || '';
+      typeText = parts[1] || '';
+    }
 
     const tagPills = data.tags.map(t => `<span class="tag-pill">"${escapeHtml(t)}"</span>`).join('');
     const processStrip = data.process.length
@@ -419,13 +460,14 @@
         <span class="fname">${escapeHtml(filename)}</span>
         <div class="tags">${tagPills}</div>
       </div>
-      <div class="project-media" data-vimeo-id="${escapeHtml(data.vimeo || '')}"${thumbAttr}>
+      <div class="project-media" data-vimeo-id="${escapeHtml(data.vimeo || '')}">
+        ${posterImg}
         <div class="play-btn" onclick="loadVimeoVideo(this.parentElement)"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
         <div class="media-label">VIDEO_PREVIEW — drop final edit here</div>
       </div>
       <div class="project-body">
         <h3 class="project-title"><span class="idx">${idx}</span>${escapeHtml(data.title || 'Project title')}</h3>
-        <p class="project-role">role — ${escapeHtml(data.role || '')} · type — ${escapeHtml(data.type || '')}</p>
+        <p class="project-role">role — ${escapeHtml(roleText)} · type — ${escapeHtml(typeText)}</p>
         <p class="project-desc">${escapeHtml(data.description || '')}</p>
       </div>
       ${processStrip}
@@ -462,22 +504,8 @@
 
       container.innerHTML = projects.map(buildProjectHtml).join('');
 
-      // wire up thumbnail backgrounds + poster images + reveal animation
-      // for the freshly-injected markup
-      container.querySelectorAll('.project-media').forEach(el => {
-        const thumb = el.getAttribute('data-thumbnail');
-        if(thumb){
-          el.style.backgroundImage = `url("${thumb}")`;
-          el.classList.add('has-thumb');
-        }
-      });
-      container.querySelectorAll('[data-img]').forEach(el => {
-        const img = el.getAttribute('data-img');
-        if(img){
-          el.style.backgroundImage = `url("${img}")`;
-          el.classList.add('has-img');
-        }
-      });
+      // images wire themselves up via onload/onerror in the markup above —
+      // just hook the reveal-on-scroll animation for the new elements
       container.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
     }catch(err){
