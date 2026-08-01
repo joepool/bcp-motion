@@ -2,7 +2,7 @@
 # "tags", "process" and "assets" accept comma-separated lists,
 # or you can repeat the "process:" / "asset:" line once per image — both work.
 
-filename: brand-film.mp4
+filename: shush-film.mp4
 title: Project title
 vimeo: 1214386590
 thumbnail: images/mess30.png
