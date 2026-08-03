@@ -2,21 +2,19 @@
 # "tags", "process" and "assets" accept comma-separated lists,
 # or you can repeat the "process:" / "asset:" line once per image — both work.
 
-filename: shush-film.mp4
-title: Project title
+filename: continued_chaos.mp4
+title: Continued_Chaos
 vimeo: 1214386590
-thumbnail: images/mess30.png
-subheading: lead motion designer | 30s brand film
-tags: After Effects, Cinema 4D
-description: Add a short description here: the brief, what the film needed to do, and the part you owned — from storyboard through final grade.
+thumbnail: thumbnail.png
+subheading: live brief with xk studios.
+tags: after effects, cinema 4d
+description: The amount of flights across the world has drastically gone up over the last 50 years, this motion design piece shows what the world could look like if the amount of flights continues to increase constantly. This project was done alongside XK Studios.
+process: image_01.png
+process: image_02.png
+process: image_04.png
+process: image_07.png
+process: image_06.png
 
-process: images/Comp1_20.png
-process: process_02.jpg
-process: process_03.jpg
-process: process_04.jpg
-process: reel_wip.mov
-
-asset: still_01.jpg
-asset: still_02.jpg
-asset: bts_01.jpg
-asset: bts_02.jpg
+asset: wireframe_01.tif
+asset: wireframe_02.tif
+asset: video 1215250713

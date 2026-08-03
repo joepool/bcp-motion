@@ -1,0 +1,20 @@
+# Lines starting with # are ignored. Order of fields doesn't matter.
+# "tags", "process" and "assets" accept comma-separated lists,
+# or you can repeat the "process:" / "asset:" line once per image — both work.
+
+filename: overstimulation.mp4
+title: Overstimulation
+vimeo: 1215259479
+thumbnail: thumb.jpg
+subheading: immersive exhibition - @w1curates
+tags: after effects
+description: I had the opportunity to display my work inside of W1 Curates' immersive space, and for this project I wanted to make the room feel as small as possible, like you're trapped inside, in an overstimulating environment.
+process: overstimulation_01.png
+process: overstimulation_02.png
+process: overstimulation_03.png
+process: overstimulation_04.png
+process: overstimulation_05.png
+
+asset: wireframe_01.tif
+asset: video 1215277762
+asset: video 1215276443

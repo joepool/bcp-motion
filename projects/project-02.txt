@@ -1,14 +1,6 @@
-filename: title-sequence.mp4
-title: Project title
-vimeo: 76979871
-thumbnail:
-subheading: motion designer | title sequence
-tags: Premiere Pro, Illustrator, After Effects
-description: Add a short description here: the brief, what the film needed to do, and the part you owned — from storyboard through final grade.
-
-process: process_01.jpg
-process: process_02.jpg
-process: process_03.jpg
-process: reel_wip.mov
-process: still_01.jpg
-process: bts_01.jpg
+filename: 2026_showreel.mp4
+title: 2026_Showreel
+vimeo: 1215255978
+thumbnail: thumbnail.jpg
+subheading: primarily 2d focused, with experimentation in 3d.
+tags: after effects, cinema4d, photoshop
