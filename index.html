@@ -230,6 +230,20 @@
   .thumb.img-missing .thumb-label::before{
     content:"⚠ missing — "; color:var(--pink);
   }
+  .thumb-play{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:34px; height:34px; border-radius:50%; z-index:1;
+    background: rgba(11,14,19,0.6); border:1px solid rgba(255,255,255,0.3);
+    display:flex; align-items:center; justify-content:center;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .thumb-play svg{ fill:var(--text); margin-left:2px; }
+  .thumb:hover .thumb-play{ border-color:var(--amber); background: rgba(11,14,19,0.8); }
+  .thumb-video .thumb-label{ position:relative; z-index:1; color:#f2f4f6; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
+  .thumb-video::after{
+    content:""; position:absolute; inset:0; z-index:0;
+    background: linear-gradient(180deg, rgba(11,14,19,0.1), rgba(11,14,19,0.55));
+  }
 
   .empty-note{
     font-family:var(--mono); font-size:13px; color:var(--text-dim); padding: 0 30px 28px;
@@ -255,6 +269,13 @@
   .lightbox img{
     display:block; width:100%; height:auto; max-height:78vh; object-fit:contain;
     background: var(--bg-raise);
+  }
+  .lightbox-video{
+    display:none; position:relative; width:100%; aspect-ratio:16/9;
+    background: var(--bg-raise);
+  }
+  .lightbox-video iframe{
+    position:absolute; inset:0; width:100%; height:100%; border:0;
   }
   .lightbox-caption{
     font-family:var(--mono); font-size:12px; color:var(--text-dim);
@@ -332,6 +353,7 @@
     <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close">&times;</button>
     <div class="lightbox-frame">
       <img id="lightboxImg" src="" alt="">
+      <div id="lightboxVideo" class="lightbox-video"></div>
     </div>
     <p class="lightbox-caption" id="lightboxCaption"></p>
   </div>
@@ -412,7 +434,7 @@
       : `images/${imgName}`;
   }
 
-  function thumbHtml(imgName){
+  function imageThumbHtml(imgName){
     const label = escapeHtml(imgName);
     const src = escapeHtml(resolveImgPath(imgName));
     return `<div class="thumb" data-img="${src}" onclick="openLightbox(this, '${label.replace(/'/g,"\\'")}')">
@@ -421,6 +443,29 @@
            onerror="this.closest('.thumb').classList.add('img-missing'); console.warn('Image not found:', this.src); this.remove();">
       <span class="thumb-label">${label}</span>
     </div>`;
+  }
+
+  // Video entries look like: vimeo:<id>|<thumbnail>|<label>
+  // The thumbnail and label are both optional.
+  function videoThumbHtml(vimeoId, rest){
+    const parts = (rest || '').split('|').map(s => s.trim());
+    const thumbPath = parts[0] || '';
+    const label = escapeHtml(parts[1] || `vimeo ${vimeoId}`);
+    const posterImg = thumbPath
+      ? `<img src="${escapeHtml(resolveImgPath(thumbPath))}" alt="${label}" loading="lazy"
+             onload="this.closest('.thumb').classList.add('has-img')"
+             onerror="console.warn('Video thumbnail not found:', this.src); this.remove();">`
+      : '';
+    return `<div class="thumb thumb-video" data-vimeo-id="${escapeHtml(vimeoId)}" onclick="openLightbox(this, '${label.replace(/'/g,"\\'")}')">
+      ${posterImg}
+      <span class="thumb-play"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+      <span class="thumb-label">${label}</span>
+    </div>`;
+  }
+
+  function thumbHtml(entry){
+    const videoMatch = entry.match(/^vimeo:\s*(\d+)\s*(?:\|(.*))?$/i);
+    return videoMatch ? videoThumbHtml(videoMatch[1], videoMatch[2]) : imageThumbHtml(entry);
   }
 
   function buildProjectHtml(data, index){
@@ -591,16 +636,35 @@
       ></iframe>`;
   }
 
-  // ---- lightbox popup for stills ----
+  // ---- lightbox popup for stills and videos ----
   const lightbox = document.getElementById('lightbox');
   const lightboxImg = document.getElementById('lightboxImg');
+  const lightboxVideo = document.getElementById('lightboxVideo');
   const lightboxCaption = document.getElementById('lightboxCaption');
 
   function openLightbox(el, label){
-    const src = el.getAttribute('data-img') || '';
-    lightboxImg.src = src;
-    lightboxImg.alt = label || '';
+    const vimeoId = el.getAttribute('data-vimeo-id');
     lightboxCaption.textContent = label || '';
+
+    if(vimeoId){
+      lightboxImg.style.display = 'none';
+      lightboxImg.src = '';
+      lightboxVideo.style.display = 'block';
+      lightboxVideo.innerHTML = `<iframe
+          src="https://player.vimeo.com/video/${vimeoId}?title=0&byline=0&portrait=0&color=ffb454&autoplay=1"
+          frameborder="0"
+          allow="autoplay; fullscreen; picture-in-picture"
+          allowfullscreen
+        ></iframe>`;
+    } else {
+      lightboxVideo.style.display = 'none';
+      lightboxVideo.innerHTML = '';
+      lightboxImg.style.display = 'block';
+      const src = el.getAttribute('data-img') || '';
+      lightboxImg.src = src;
+      lightboxImg.alt = label || '';
+    }
+
     lightbox.classList.add('open');
     document.body.style.overflow = 'hidden';
   }
@@ -609,6 +673,7 @@
     lightbox.classList.remove('open');
     document.body.style.overflow = '';
     lightboxImg.src = '';
+    lightboxVideo.innerHTML = ''; // clears the iframe so playback actually stops
   }
 
   document.addEventListener('keydown', (e) => {

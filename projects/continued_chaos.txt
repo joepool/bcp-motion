@@ -17,4 +17,4 @@ process: image_06.png
 
 asset: wireframe_01.tif
 asset: wireframe_02.tif
-asset: video 1215250713
+asset: vimeo:1215250713|images/image_03.png|process_vid.mp4
