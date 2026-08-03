@@ -3,5 +3,6 @@
 # To reorder projects: just reorder these lines.
 # To remove a project: delete or comment out (#) its line.
 
-project-01.txt
-project-02.txt
+showreel.txt
+continued_chaos.txt
+overstimulation.txt
