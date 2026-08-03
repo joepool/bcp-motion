@@ -16,5 +16,5 @@ process: overstimulation_04.png
 process: overstimulation_05.png
 
 asset: wireframe_01.tif
-asset: video 1215277762
-asset: video 1215276443
+asset: vimeo:1215277762|images/image_04.png|process_vid.mp4
+asset: vimeo:1215276443|images/image_05.png|process_vid.mp4

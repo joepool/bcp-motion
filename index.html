@@ -67,7 +67,6 @@
   .nav-links{display:flex; gap:28px;}
   .nav-links a{color:var(--text-dim); transition: color 0.2s;}
   .nav-links a:hover{color:var(--cyan);}
-  .nav-links a::after{content:"()";  color:var(--text-dim);}
 
   section{position:relative; z-index:1;}
 
@@ -200,7 +199,7 @@
   .subhead::before{content:"$ ls ";}
 
   .strip{
-    display:flex; gap:10px; overflow-x:auto; padding: 0 30px 28px;
+    display:flex; gap:10px; overflow-x:auto; padding: 8px 30px 28px;
     scrollbar-width:thin;
   }
   .strip::-webkit-scrollbar{height:6px;}
@@ -271,7 +270,7 @@
     background: var(--bg-raise);
   }
   .lightbox-video{
-    display:none; position:relative; width:100%; aspect-ratio:16/9;
+    display:none; position:relative; width:min(1100px, 92vw); aspect-ratio:16/9;
     background: var(--bg-raise);
   }
   .lightbox-video iframe{
@@ -293,15 +292,10 @@
   .lightbox-close:hover{border-color:var(--amber); color:var(--amber);}
 
   footer{
-    border-top:1px solid var(--line); padding: 70px 24px 40px;
+    border-top:1px solid var(--line); padding: 40px 24px;
     font-family:var(--mono);
   }
   .foot-inner{max-width:1000px; margin:0 auto;}
-  .foot-prompt{font-size:16px; margin-bottom:22px;}
-  .foot-prompt .u{color:var(--cyan);} .foot-prompt .p{color:var(--text-dim);}
-  .foot-links{display:flex; gap:26px; flex-wrap:wrap; margin-bottom:40px;}
-  .foot-links a{font-size:14px; color:var(--text); border-bottom:1px solid transparent; padding-bottom:2px; transition:border-color 0.2s, color 0.2s;}
-  .foot-links a:hover{border-color:var(--amber); color:var(--amber);}
   .foot-bottom{color:var(--text-dim); font-size:12px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;}
 </style>
 </head>
@@ -313,8 +307,9 @@
 <nav>
   <div class="nav-logo">ben<span>_</span>pool</div>
   <div class="nav-links">
-    <a href="#work">work</a>
-    <a href="#contact">contact</a>
+    <a href="mailto:motion@benpool.co.uk">email</a>
+    <a href="https://www.instagram.com/bcp.motion" target="_blank">instagram</a>
+    <a href="https://www.linkedin.com/in/ben-pool-7097b92b6" target="_blank">linkedin</a>
   </div>
 </nav>
 
@@ -359,15 +354,9 @@
   </div>
 </div>
 
-<!-- ===================== FOOTER / CONTACT ===================== -->
+<!-- ===================== FOOTER ===================== -->
 <footer id="contact">
   <div class="foot-inner">
-    <p class="foot-prompt"><span class="u">ben@pool</span><span class="p">:~$</span> contact --open</p>
-    <div class="foot-links">
-      <a href="mailto:motion@benpool.co.uk">email</a>
-      <a href="https://www.instagram.com/bcp.motion" target="_blank">instagram</a>
-      <a href="https://www.linkedin.com/in/ben-pool-7097b92b6" target="_blank">linkedin</a>
-    </div>
     <div class="foot-bottom">
       <span>Ben Pool — Motion Designer, London</span>
       <span id="footClock">--:--:--</span>
@@ -478,14 +467,7 @@
              onerror="console.warn('Thumbnail not found:', this.src); this.remove();">`
       : '';
 
-    // Accepts either a single combined "subheading: role | type" field,
-    // or the older separate role: / type: fields, for compatibility.
-    let roleText = data.role || '', typeText = data.type || '';
-    if(data.subheading){
-      const parts = data.subheading.split('|').map(s => s.trim());
-      roleText = parts[0] || '';
-      typeText = parts[1] || '';
-    }
+    const subheading = data.subheading || '';
 
     const tagPills = data.tags.map(t => `<span class="tag-pill">"${escapeHtml(t)}"</span>`).join('');
     const processStrip = data.process.length
@@ -508,7 +490,7 @@
       </div>
       <div class="project-body">
         <h3 class="project-title"><span class="idx">${idx}</span>${escapeHtml(data.title || 'Project title')}</h3>
-        <p class="project-role">role — ${escapeHtml(roleText)} · type — ${escapeHtml(typeText)}</p>
+        <p class="project-role">${escapeHtml(subheading)}</p>
         <p class="project-desc">${escapeHtml(data.description || '')}</p>
       </div>
       ${processStrip}
