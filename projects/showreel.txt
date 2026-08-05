@@ -1,6 +1,6 @@
 filename: 2026_showreel.mp4
 title: 2026_Showreel
 vimeo: 1215900305
-thumbnail: thumbnails/thumb(3).png
+thumbnail: thumbnails/thumb(3).jpg
 subheading: primarily 2d focused, with experimentation in 3d.
 tags: after effects, cinema4d, photoshop
