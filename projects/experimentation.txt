@@ -2,10 +2,13 @@
 # "tags", "process" and "assets" accept comma-separated lists,
 # or you can repeat the "process:" / "asset:" line once per image — both work.
 
+filename: overstimulation.mp4
 title: Experimentation
+vimeo: 1215903243
+thumbnail: thumbnails/thumb(14).jpg
 subheading: experimentation within after effects, trying new effects and techniques
+tags: after effects
 
-asset: vimeo:1215903243|thumbnails/thumb(14).jpg|website_test.mp4
 asset: vimeo:1215903633|thumbnails/thumb(15).jpg|website_test_02.mp4
 asset: vimeo:1215903872|thumbnails/thumb(16).jpg|website_test_03.mp4
 asset: vimeo:1215909486|thumbnails/thumb(17).png|combined_captcha.mp4
