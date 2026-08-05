@@ -4,7 +4,7 @@
 # To remove a project: delete or comment out (#) its line.
 
 showreel.txt
+brain_traffic.txt
 continued_chaos.txt
 overstimulation.txt
-brain_traffic.txt
 experimentation.txt
