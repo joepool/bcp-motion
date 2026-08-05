@@ -9,7 +9,6 @@ thumbnail: thumbnails/thumb(10).jpg
 subheading: multi-screen installation
 tags: after effects
 description: An insight into how I believe my brain works in a geographical sense, using a multi-screen layout to create a motion design piece based on the way I interpret my thoughts.
-
 - immersive exhibition for my 2026 degree show
 - master file showing the compositing process
 - process reel of the animating process
