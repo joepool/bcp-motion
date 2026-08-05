@@ -4,18 +4,18 @@
 
 filename: brain_traffic.mp4
 title: Brain_Traffic
-vimeo: 1215301130
-thumbnail: Brain_Traffic_Extended_Thumbnail.JPG
+vimeo: 1215900971
+thumbnail: thumbnails/thumb(10).png
 subheading: multi-screen installation
 tags: after effects
 description: An insight into how I believe my brain works in a geographical sense, using a multi-screen layout to create a motion design piece based on the way I interpret my thoughts.
-process: bt_01.JPG
-process: bt_02.HEIC
-process: bt_03.HEIC
-process: bt_04.HEIC
-process: bt_05.HEIC
-process: bt_06.HEIC
-process: bt_07.HEIC
+process: bt_01.png
+process: bt_02.png
+process: bt_03.png
+process: bt_04.png
+process: bt_05.png
+process: bt_06.png
+process: bt_07.png
 process: intro.png
 process: scene_01.png
 process: scene_02.png
@@ -23,7 +23,8 @@ process: scene_03.png
 process: scene_04.png
 process: scene_05.png
 
-asset: video 1215505514
-asset: video 1215505705
-asset: video 1215507380
-asset: video 1215298347
+asset: vimeo:1215900943|thumbnails/thumb(8).jpg|master.mp4
+asset: vimeo:1215901095|thumbnails/thumb(12).jpg|construction_reel.mp4
+asset: vimeo:1215901145|thumbnails/thumb(11).jpg|construction_reel_02.mp4
+asset: vimeo:1215901193|thumbnails/thumb(13).jpg|process_reel.mp4
+asset: vimeo:1215901239|thumbnails/thumb(9).jpg|cyclops.mp4

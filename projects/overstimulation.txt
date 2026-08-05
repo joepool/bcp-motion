@@ -4,17 +4,17 @@
 
 filename: overstimulation.mp4
 title: Overstimulation
-vimeo: 1215259479
-thumbnail: thumb.jpg
+vimeo: 1215900429
+thumbnail: thumbnails/thumb(4).png
 subheading: immersive exhibition - @w1curates
 tags: after effects
 description: I had the opportunity to display my work inside of W1 Curates' immersive space, and for this project I wanted to make the room feel as small as possible, like you're trapped inside, in an overstimulating environment.
-process: overstimulation_01.png
-process: overstimulation_02.png
-process: overstimulation_03.png
-process: overstimulation_04.png
-process: overstimulation_05.png
+process: ov_01.png
+process: ov_02.png
+process: ov_03.png
+process: ov_04.png
+process: ov_05.png
 
-asset: vimeo:1215277762|images/image_04.png|process_vid.mp4
-asset: vimeo:1215277762|images/image_04.png|process_vid.mp4
-asset: vimeo:1215276443|images/image_05.png|process_vid.mp4
+asset: vimeo:1215900546|thumbnails/thumb(5).jpg|ov_02.mp4
+asset: vimeo:1215900603|thumbnails/thumb(6).jpg|ov_03.mp4
+asset: vimeo:1215900663|thumbnails/thumb(7).jpg|ov_04.mp4
