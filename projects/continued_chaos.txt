@@ -4,17 +4,20 @@
 
 filename: continued_chaos.mp4
 title: Continued_Chaos
-vimeo: 1214386590
-thumbnail: chaos_thumbnail.png
+vimeo: 1215900720
+thumbnail: thumbnails/thumb(1).png
 subheading: live brief with xk studios.
 tags: after effects, cinema 4d
 description: The amount of flights across the world has drastically gone up over the last 50 years, this motion design piece shows what the world could look like if the amount of flights continues to increase constantly. This project was done alongside XK Studios.
-process: image_01.png
-process: image_02.png
-process: image_04.png
-process: image_07.png
-process: image_06.png
+process: cc_01.png
+process: cc_02.png
+process: cc_03.png
+process: cc_04.png
+process: cc_05.png
+process: cc_06.png
+process: cc_07.png
 
-asset: wireframe_01
-asset: wireframe_02
-asset: vimeo:1215250713|images/image_03.png|process_vid.mp4
+
+asset: wireframe_01.png
+asset: wireframe_02.png
+asset: vimeo:1215900859|thumbnails/thumb(2).jpg|process_reel.mp4
