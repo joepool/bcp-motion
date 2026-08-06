@@ -6,7 +6,7 @@ filename: experimentation.mp4
 title: Experimentations
 vimeo: 1215903243
 thumbnail: thumbnails/thumb(14).jpg
-subheading: experimentation within after effects, trying new effects and techniques
+subheading: experimentation within after effects, trying new effects and techniques. 3d testing soon™
 tags: after effects
 
 asset: vimeo:1215903633|thumbnails/thumb(15).jpg|website_test_02.mp4
