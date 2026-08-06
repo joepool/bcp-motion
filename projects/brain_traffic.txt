@@ -9,6 +9,7 @@ thumbnail: thumbnails/thumb(10).jpg
 subheading: multi-screen installation
 tags: after effects
 description: An insight into how I believe my brain works in a geographical sense, using a multi-screen layout to create a motion design piece based on the way I interpret my thoughts.
+
 process: bt_01.png
 process: bt_02.png
 process: bt_03.png
