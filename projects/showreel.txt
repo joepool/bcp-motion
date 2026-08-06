@@ -4,3 +4,4 @@ vimeo: 1215900305
 thumbnail: thumbnails/thumb(3).jpg
 subheading: primarily 2d focused, with experimentation in 3d.
 tags: after effects, cinema4d, photoshop
+description: including: overstimulation, brain_traffic, continued_chaos.
