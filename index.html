@@ -128,6 +128,8 @@
   @keyframes bob{0%,100%{transform:translateY(0);} 50%{transform:translateY(6px);}}
 
   .section-inner{max-width:1000px; margin:0 auto; padding: 110px 24px;}
+  #aboutme .section-inner{padding-bottom:40px;}
+  #work .section-inner{padding-top:40px;}
   .comment{
     font-family:var(--mono); color: #5f6b7a; font-size:13.5px; margin-bottom:14px;
   }
@@ -212,10 +214,30 @@
   .subhead::before{content:"$ ";}
 
   .strip{
-    display:flex; gap:10px; overflow-x:auto; padding: 8px 30px 28px;
+    display:flex; gap:10px; overflow-x:auto; padding: 8px 30px 20px;
     scrollbar-width:none; -ms-overflow-style:none;
   }
   .strip::-webkit-scrollbar{display:none;}
+  .strip-wrap{position:relative;}
+  .strip-track{
+    position:absolute; left:30px; right:30px; bottom:8px; height:4px;
+    border-radius:4px; cursor:pointer;
+    opacity:0; transition: opacity 0.2s;
+  }
+  .strip-wrap:hover .strip-track{opacity:1;}
+  .strip-thumb{
+    position:absolute; top:0; height:100%; min-width:30px;
+    background:var(--amber); border-radius:4px;
+    cursor:grab;
+  }
+  .strip-thumb::before{
+    /* invisible padding so the thin bar is easier to grab with a mouse */
+    content:""; position:absolute; top:-10px; bottom:-10px; left:0; right:0;
+  }
+  .strip-thumb.dragging{cursor:grabbing;}
+  @media (max-width:600px){
+    .strip-track{display:none;}
+  }
   .thumb{
     position:relative; overflow:hidden;
     min-width:150px; height:100px; border-radius:6px; flex-shrink:0;
@@ -272,6 +294,9 @@
     position:relative; max-width:min(1100px, 92vw); max-height:88vh;
     display:flex; flex-direction:column;
   }
+  .lightbox-media{
+    position:relative;
+  }
   .lightbox-frame{
     border:1px solid var(--line); border-radius:10px; overflow:hidden;
     background: var(--surface);
@@ -287,6 +312,22 @@
   }
   .lightbox-video iframe{
     position:absolute; inset:0; width:100%; height:100%; border:0;
+  }
+  .lightbox-nav{
+    display:none;
+    position:absolute; top:50%; transform:translateY(-50%); z-index:5;
+    width:40px; height:40px; border-radius:50%;
+    border:1.5px solid rgba(255,255,255,0.3); color:var(--text);
+    background: rgba(11,14,19,0.55);
+    align-items:center; justify-content:center;
+    cursor:pointer; transition: all 0.2s;
+  }
+  .lightbox-nav:hover{border-color:var(--amber); color:var(--amber); background: rgba(11,14,19,0.8);}
+  .lightbox-prev{left:-56px;}
+  .lightbox-next{right:-56px;}
+  @media (max-width:900px){
+    .lightbox-prev{left:8px;}
+    .lightbox-next{right:8px;}
   }
   .lightbox-caption{
     font-family:var(--mono); font-size:12px; color:var(--text-dim);
@@ -370,9 +411,17 @@
 <div class="lightbox" id="lightbox" onclick="if(event.target === this) closeLightbox();">
   <div class="lightbox-inner">
     <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close">&times;</button>
-    <div class="lightbox-frame">
-      <img id="lightboxImg" src="" alt="">
-      <div id="lightboxVideo" class="lightbox-video"></div>
+    <div class="lightbox-media">
+      <div class="lightbox-frame">
+        <img id="lightboxImg" src="" alt="">
+        <div id="lightboxVideo" class="lightbox-video"></div>
+      </div>
+      <button class="lightbox-nav lightbox-prev" id="lightboxPrev" onclick="event.stopPropagation(); showRelativeLightboxItem(-1);" aria-label="Previous">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="lightbox-nav lightbox-next" id="lightboxNext" onclick="event.stopPropagation(); showRelativeLightboxItem(1);" aria-label="Next">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
     </div>
     <p class="lightbox-caption" id="lightboxCaption"></p>
   </div>
@@ -438,6 +487,13 @@
     ));
   }
 
+  // Lets project text files use a literal "\n" to force a line break,
+  // e.g. "First line.\nSecond line." Escape first, then swap in <br>
+  // so the \n itself can never be used to inject markup.
+  function escapeHtmlWithBreaks(str){
+    return escapeHtml(str).replace(/\\n/g, '<br>');
+  }
+
   // Resolves whatever the person typed in the text file into an actual
   // src path: leave full URLs and anything with a "/" in it alone,
   // otherwise assume it lives in the images/ folder next to index.html.
@@ -450,7 +506,7 @@
   function imageThumbHtml(imgName){
     const label = escapeHtml(imgName);
     const src = escapeHtml(resolveImgPath(imgName));
-    return `<div class="thumb" data-img="${src}" onclick="openLightbox(this, '${label.replace(/'/g,"\\'")}')">
+    return `<div class="thumb" data-img="${src}" onclick="openLightbox(this)">
       <img src="${src}" alt="${label}" loading="lazy"
            onload="this.closest('.thumb').classList.add('has-img')"
            onerror="this.closest('.thumb').classList.add('img-missing'); console.warn('Image not found:', this.src); this.remove();">
@@ -469,7 +525,7 @@
              onload="this.closest('.thumb').classList.add('has-img')"
              onerror="console.warn('Video thumbnail not found:', this.src); this.remove();">`
       : '';
-    return `<div class="thumb thumb-video" data-vimeo-id="${escapeHtml(vimeoId)}" onclick="openLightbox(this, '${label.replace(/'/g,"\\'")}')">
+    return `<div class="thumb thumb-video" data-vimeo-id="${escapeHtml(vimeoId)}" onclick="openLightbox(this)">
       ${posterImg}
       <span class="thumb-play"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
       <span class="thumb-label">${label}</span>
@@ -495,10 +551,10 @@
 
     const tagPills = data.tags.map(t => `<span class="tag-pill">"${escapeHtml(t)}"</span>`).join('');
     const processStrip = data.process.length
-      ? `<p class="subhead">process/</p><div class="strip">${data.process.map(thumbHtml).join('')}</div>`
+      ? `<p class="subhead">process/</p><div class="strip-wrap"><div class="strip">${data.process.map(thumbHtml).join('')}</div><div class="strip-track"><div class="strip-thumb"></div></div></div>`
       : '';
     const assetStrip = data.assets.length
-      ? `<p class="subhead">assets/</p><div class="strip">${data.assets.map(thumbHtml).join('')}</div>`
+      ? `<p class="subhead">assets/</p><div class="strip-wrap"><div class="strip">${data.assets.map(thumbHtml).join('')}</div><div class="strip-track"><div class="strip-thumb"></div></div></div>`
       : '';
 
     return `
@@ -514,8 +570,8 @@
       </div>
       <div class="project-body">
         <h3 class="project-title"><span class="idx">${idx}</span>${escapeHtml(data.title || 'Project title')}</h3>
-        <p class="project-role">${escapeHtml(subheading)}</p>
-        <p class="project-desc">${escapeHtml(data.description || '')}</p>
+        <p class="project-role">${escapeHtmlWithBreaks(subheading)}</p>
+        <p class="project-desc">${escapeHtmlWithBreaks(data.description || '')}</p>
       </div>
       ${processStrip}
       ${assetStrip}
@@ -554,11 +610,91 @@
       // images wire themselves up via onload/onerror in the markup above —
       // just hook the reveal-on-scroll animation for the new elements
       container.querySelectorAll('.reveal').forEach(el => io.observe(el));
+      initStripScrollbars(container);
 
     }catch(err){
       console.error(err);
       container.innerHTML = '<p class="comment">// couldn\'t load projects/manifest.txt — this page needs to be served over http(s), not opened as a local file. Try running a local server (e.g. "python3 -m http.server") from this folder.</p>';
     }
+  }
+
+  // Drives the custom .strip-track/.strip-thumb indicator: sized and
+  // positioned to mirror each strip's real scroll state, and updated
+  // live as the strip scrolls or the window resizes. This replaces the
+  // browser's native scrollbar, which some browsers only repaint during
+  // an active scroll gesture and ignore CSS :hover state changes on.
+  function initStripScrollbars(root){
+    root.querySelectorAll('.strip-wrap').forEach(wrap => {
+      const strip = wrap.querySelector('.strip');
+      const track = wrap.querySelector('.strip-track');
+      const thumb = wrap.querySelector('.strip-thumb');
+      if(!strip || !track || !thumb) return;
+
+      function update(){
+        const trackWidth = track.clientWidth;
+        const scrollable = strip.scrollWidth > strip.clientWidth + 1;
+        track.style.display = scrollable ? 'block' : 'none';
+        if(!scrollable) return;
+
+        const ratio = strip.clientWidth / strip.scrollWidth;
+        const thumbWidth = Math.max(30, trackWidth * ratio);
+        const maxScroll = strip.scrollWidth - strip.clientWidth;
+        const scrollRatio = maxScroll > 0 ? strip.scrollLeft / maxScroll : 0;
+        const maxThumbLeft = trackWidth - thumbWidth;
+
+        thumb.style.width = `${thumbWidth}px`;
+        thumb.style.left = `${scrollRatio * maxThumbLeft}px`;
+      }
+
+      strip.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update);
+      update();
+
+      // ---- drag the thumb to scroll, like a normal scrollbar ----
+      let dragging = false;
+      let dragStartX = 0;
+      let dragStartScrollLeft = 0;
+
+      thumb.addEventListener('pointerdown', (e) => {
+        dragging = true;
+        thumb.setPointerCapture(e.pointerId);
+        dragStartX = e.clientX;
+        dragStartScrollLeft = strip.scrollLeft;
+        thumb.classList.add('dragging');
+        e.preventDefault();
+      });
+
+      thumb.addEventListener('pointermove', (e) => {
+        if(!dragging) return;
+        const trackWidth = track.clientWidth;
+        const thumbWidth = thumb.offsetWidth;
+        const maxThumbLeft = trackWidth - thumbWidth;
+        const maxScroll = strip.scrollWidth - strip.clientWidth;
+        if(maxThumbLeft <= 0 || maxScroll <= 0) return;
+        const deltaX = e.clientX - dragStartX;
+        strip.scrollLeft = dragStartScrollLeft + (deltaX / maxThumbLeft) * maxScroll;
+      });
+
+      function endDrag(){
+        dragging = false;
+        thumb.classList.remove('dragging');
+      }
+      thumb.addEventListener('pointerup', endDrag);
+      thumb.addEventListener('pointercancel', endDrag);
+
+      // ---- click anywhere else on the track to jump straight there ----
+      track.addEventListener('pointerdown', (e) => {
+        if(e.target === thumb) return; // thumb handles its own drag above
+        const rect = track.getBoundingClientRect();
+        const thumbWidth = thumb.offsetWidth;
+        const maxThumbLeft = rect.width - thumbWidth;
+        const maxScroll = strip.scrollWidth - strip.clientWidth;
+        if(maxThumbLeft <= 0 || maxScroll <= 0) return;
+        const clickX = e.clientX - rect.left - thumbWidth / 2;
+        const targetThumbLeft = Math.min(Math.max(clickX, 0), maxThumbLeft);
+        strip.scrollLeft = (targetThumbLeft / maxThumbLeft) * maxScroll;
+      });
+    });
   }
 
   // ---- typing effect for hero terminal ----
@@ -643,22 +779,36 @@
       ></iframe>`;
   }
 
-  // ---- lightbox popup for stills and videos ----
+  // ---- lightbox popup for stills and videos, with prev/next between
+  // the other items in the same process/asset strip ----
   const lightbox = document.getElementById('lightbox');
   const lightboxImg = document.getElementById('lightboxImg');
   const lightboxVideo = document.getElementById('lightboxVideo');
   const lightboxCaption = document.getElementById('lightboxCaption');
+  const lightboxPrev = document.getElementById('lightboxPrev');
+  const lightboxNext = document.getElementById('lightboxNext');
 
-  function openLightbox(el, label){
-    const vimeoId = el.getAttribute('data-vimeo-id');
-    lightboxCaption.textContent = label || '';
+  let lightboxGroup = [];
+  let lightboxIndex = -1;
 
-    if(vimeoId){
+  function readThumbData(el){
+    const labelEl = el.querySelector('.thumb-label');
+    return {
+      vimeoId: el.getAttribute('data-vimeo-id') || '',
+      img: el.getAttribute('data-img') || '',
+      label: labelEl ? labelEl.textContent : ''
+    };
+  }
+
+  function renderLightboxItem(item){
+    lightboxCaption.textContent = item.label || '';
+
+    if(item.vimeoId){
       lightboxImg.style.display = 'none';
       lightboxImg.src = '';
       lightboxVideo.style.display = 'block';
       lightboxVideo.innerHTML = `<iframe
-          src="https://player.vimeo.com/video/${vimeoId}?title=0&byline=0&portrait=0&color=ffb454&autoplay=1"
+          src="https://player.vimeo.com/video/${item.vimeoId}?title=0&byline=0&portrait=0&color=ffb454&autoplay=1"
           frameborder="0"
           allow="autoplay; fullscreen; picture-in-picture"
           allowfullscreen
@@ -667,13 +817,37 @@
       lightboxVideo.style.display = 'none';
       lightboxVideo.innerHTML = '';
       lightboxImg.style.display = 'block';
-      const src = el.getAttribute('data-img') || '';
-      lightboxImg.src = src;
-      lightboxImg.alt = label || '';
+      lightboxImg.src = item.img;
+      lightboxImg.alt = item.label || '';
     }
+  }
+
+  function updateLightboxNav(){
+    const hasPrev = lightboxGroup.length > 1 && lightboxIndex > 0;
+    const hasNext = lightboxGroup.length > 1 && lightboxIndex < lightboxGroup.length - 1;
+    lightboxPrev.style.display = hasPrev ? 'flex' : 'none';
+    lightboxNext.style.display = hasNext ? 'flex' : 'none';
+  }
+
+  function openLightbox(el){
+    const strip = el.closest('.strip');
+    lightboxGroup = strip ? Array.from(strip.querySelectorAll('.thumb')) : [el];
+    lightboxIndex = lightboxGroup.indexOf(el);
+    if(lightboxIndex === -1) lightboxIndex = 0;
+
+    renderLightboxItem(readThumbData(el));
+    updateLightboxNav();
 
     lightbox.classList.add('open');
     document.body.style.overflow = 'hidden';
+  }
+
+  function showRelativeLightboxItem(delta){
+    const newIndex = lightboxIndex + delta;
+    if(newIndex < 0 || newIndex >= lightboxGroup.length) return;
+    lightboxIndex = newIndex;
+    renderLightboxItem(readThumbData(lightboxGroup[lightboxIndex]));
+    updateLightboxNav();
   }
 
   function closeLightbox(){
@@ -681,10 +855,15 @@
     document.body.style.overflow = '';
     lightboxImg.src = '';
     lightboxVideo.innerHTML = ''; // clears the iframe so playback actually stops
+    lightboxGroup = [];
+    lightboxIndex = -1;
   }
 
   document.addEventListener('keydown', (e) => {
-    if(e.key === 'Escape' && lightbox.classList.contains('open')) closeLightbox();
+    if(!lightbox.classList.contains('open')) return;
+    if(e.key === 'Escape') closeLightbox();
+    else if(e.key === 'ArrowLeft') showRelativeLightboxItem(-1);
+    else if(e.key === 'ArrowRight') showRelativeLightboxItem(1);
   });
 
   // kick things off
