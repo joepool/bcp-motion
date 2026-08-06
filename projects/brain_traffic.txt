@@ -16,7 +16,6 @@ description: - process reel of the animating process
 description: - process reels of the construction process
 description: - behind the scenes videos inside after effects
 
-
 process: bt_01.png
 process: bt_02.png
 process: bt_03.png
