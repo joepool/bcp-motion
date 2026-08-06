@@ -16,3 +16,4 @@ asset: vimeo:1215909476|thumbnails/thumb(18).png|japan_captcha.mp4
 asset: vimeo:1215911229|thumbnails/thumb(19).png|pixel_mosh.mp4
 asset: vimeo:1215912018|thumbnails/thumb(20).png|delayed_sorting.mp4
 asset: vimeo:1215912651|thumbnails/thumb(21).png|folder_sorting.mp4
+asset: vimeo:1216135192|thumbnails/thumb(22).jpg|airbnb.mp4
