@@ -8,7 +8,7 @@ vimeo: 1215900971
 thumbnail: thumbnails/thumb(10).jpg
 subheading: multi-screen installation
 tags: after effects
-description: An insight into how I believe my brain works in a geographical sense, using a multi-screen layout to create a motion design piece based on the way I interpret my thoughts. \n\n-one\n-two\n-three
+description: An insight into how I believe my brain works in a geographical sense, using a multi-screen layout to create a motion design piece based on the way I interpret my thoughts. \n\nThis concept sparked from me constantly having geographically related thoughts, the idea of a geographical "chain reaction" inside my head all the time, and how one thought can trigger something new and completely random.\n\n- created a master file to view all screens on one composition for editing\n- documented the process of constructing the installation\n- documented the process of constructing the installation for my 2026 degree show\n- created a process reel showcasing behind the scenes\n- used the "cyclops" plugin to show layers, motion paths and bounding boxes
 
 process: bt_01.png
 process: bt_02.png

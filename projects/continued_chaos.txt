@@ -8,7 +8,7 @@ vimeo: 1215900720
 thumbnail: thumbnails/thumb(1).png
 subheading: live brief with xk studios.
 tags: after effects, cinema 4d
-description: The amount of flights across the world has drastically gone up over the last 50 years, this motion design piece shows what the world could look like if the amount of flights continues to increase constantly. This project was done alongside XK Studios.
+description: The amount of flights across the world has drastically gone up over the last 50 years, this motion design piece shows what the world could look like if the amount of flights continues to increase constantly. This project was done alongside XK Studios.\n\nThis was my first project using Cinema4D, I really enjoyed experimenting with new techniques and filling the screen. Experimentating with wireframes was also very interesting, and I felt using them added a lot of depth to my project.
 process: cc_01.png
 process: cc_02.png
 process: cc_03.png

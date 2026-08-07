@@ -8,7 +8,7 @@ vimeo: 1215900429
 thumbnail: thumbnails/thumb(4).jpg
 subheading: immersive exhibition - @w1curates
 tags: after effects
-description: I had the opportunity to display my work inside of W1 Curates' immersive space, and for this project I wanted to make the room feel as small as possible, like you're trapped inside, in an overstimulating environment.
+description: I had the opportunity to display my work inside of W1 Curates' immersive space, and for this project I wanted to make the room feel as small as possible, like you're trapped inside, in an overstimulating environment.\n\nThis project was based on youth culture, and I thought a good way to make it relatable to youths was to be constantly bombarded, whether that's with pop-ups or notifications, I wanted to flood the entire screen and cause chaos, ending up with a system failiure acting as a complete brain overload.
 process: ov_01.png
 process: ov_02.png
 process: ov_03.png
