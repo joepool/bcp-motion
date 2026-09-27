@@ -3,7 +3,7 @@
 # or you can repeat the "process:" / "asset:" line once per image — both work.
 
 filename: brain_traffic.mp4
-title: Brain_Traffic
+title: brain_traffic
 vimeo: 1215900971
 thumbnail: thumbnails/thumb(10).jpg
 subheading: multi-screen installation

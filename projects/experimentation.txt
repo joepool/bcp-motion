@@ -3,7 +3,7 @@
 # or you can repeat the "process:" / "asset:" line once per image — both work.
 
 filename: experimentation.mp4
-title: Experimentations
+title: experimentations
 vimeo: 1215903243
 thumbnail: thumbnails/thumb(14).jpg
 description: Experimentation within after effects, trying new effects and techniques. 3d testing soon™

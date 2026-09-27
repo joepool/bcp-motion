@@ -3,6 +3,7 @@ title: adobe_firefly
 vimeo: 1230280491
 thumbnail: thumbnails/adobe_firefly.png
 subheading: Adobe Creative Apprenticeship Program Commission
+tags: after effects
 description:I was commissioned to create two short looping animations exploring creativity, experimentation and to inspire the next generation of creatives. \n\nThe brief gave me a lot of freedom to bring my own style and motion language into the work, while also incorporating Adobe Firefly into my creative process. \n\nIt was a really exciting opportunity to experiment, push ideas further and create something that feels bold, playful and dynamic.
 
 process: adobe_1.png
